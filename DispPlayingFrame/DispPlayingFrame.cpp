@@ -2,9 +2,9 @@
 //
 
 #include "stdafx.h"
+#include <atltime.h>
 #include <deque>
 #include <map>
-#include <Tchar.h>
 #include <windows.h>
 #include <WindowsX.h>
 #include "../MMDPlugin/mmd_plugin.h"
@@ -91,17 +91,18 @@ public:
 		// 初回かどうか判定
 		if (!m_bShowWindow)
 		{
-			if (param->message == WM_SHOWWINDOW)
+			//いずれかで初期化
+			if (param->hwnd == getHWND() &&
+				(param->message == WM_SHOWWINDOW ||
+					param->message == WM_SIZE ||
+					param->message == WM_ACTIVATE ||
+					param->message == WM_PAINT))
 			{
-				if (param->hwnd == getHWND())
-				{
-					_beforeShowWindow();
-					m_bShowWindow = true;
-				}
+				_beforeShowWindow();
+				m_bShowWindow = true;
 			}
 
-			// 初期化前は何もしない
-			return;
+			 return;
 		}
 
 		if (param->message == WM_WINDOWPOSCHANGED)
@@ -223,10 +224,6 @@ int version() { return 3; }
 
 MMDPluginDLL3* create3(IDirect3DDevice9*)
 {
-	if (!MMDVersionOk())
-	{
-		MessageBox(getHWND(), _T("MMDのバージョンが 9.31 ではありません。\nDispPlayingFrameは Ver.9.31 以外では正常に作動しません。"), _T("DispPlayingFrame"), MB_OK | MB_ICONERROR);
-		return nullptr;
-	}
+
 	return DispPlayingFramePlugin::GetInstance();
 }
