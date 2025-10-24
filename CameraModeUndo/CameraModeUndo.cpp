@@ -1,10 +1,12 @@
 // CameraUndo.cpp : DLL アプリケーション用にエクスポートされる関数を定義します。
 //
 
+
+
 #include "stdafx.h"
+#include <atltime.h>
 #include <deque>
 #include <map>
-#include <Tchar.h>
 #include <windows.h>
 #include <WindowsX.h>
 #include "../MMDPlugin/mmd_plugin.h"
@@ -1125,7 +1127,7 @@ public:
 	void KeyBoardProc(WPARAM wParam, LPARAM lParam) override
 	{
 		_checkRemakePtr();
-		if (IsCameraMode())
+		if (_isCameraMode())
 		{
 			if ((lParam & 0x40000000) &&	// 直前にキーが押されていて
 				(lParam & 0x80000000))		// キーが離されているなら
@@ -1186,7 +1188,7 @@ public:
 	void MouseProc(WPARAM wParam, MOUSEHOOKSTRUCT* lParam) override
 	{
 		_checkRemakePtr();
-		if (IsCameraMode())
+		if (_isCameraMode())
 		{
 			// 左ボタンアップ時に検出
 			if (wParam == WM_LBUTTONUP)
@@ -1225,19 +1227,19 @@ public:
 
 	void WndProc(CWPSTRUCT* param) override
 	{
-		// 初回かどうか判定
+		// 初回かどうか判定してみる(パッチ)
 		if (!m_bShowWindow)
 		{
-			if (param->message == WM_SHOWWINDOW)
+			//いずれかで初期化
+			if (param->hwnd == getHWND() &&
+				(param->message == WM_SHOWWINDOW ||
+					param->message == WM_SIZE ||
+					param->message == WM_ACTIVATE ||
+					param->message == WM_PAINT))
 			{
-				if (param->hwnd == getHWND())
-				{
-					_beforeShowWindow();
-					m_bShowWindow = true;
-				}
+				_beforeShowWindow();
+				m_bShowWindow = true;
 			}
-
-			// 初期化前は何もしない
 			return;
 		}
 
@@ -1299,7 +1301,7 @@ public:
 			{
 				if (param->wParam == TRUE)
 				{
-					if (IsCameraMode())
+					if (_isCameraMode())
 					{
 						m_bUpdateBtnVisible = true;
 					}
@@ -1488,6 +1490,21 @@ private:
 		}
 	}
 
+	// 現在カメラモードかどうかコンボボックスの状態から判定する
+	// select_bone_type はモデルモードの未選択時でも「2:カメラモード」になっているので使えない
+	bool _isCameraMode()
+	{
+		if (m_modelComboH != nullptr)
+		{
+			// 0番目の「ｶﾒﾗ･照明･ｱｸｾｻﾘ」が選択されているか?
+			if (ComboBox_GetCurSel(m_modelComboH) == 0)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
 	// ボタンの状態を更新する
 	void _updateBtnState()
 	{
@@ -1536,7 +1553,7 @@ private:
 	// ボタンの表示状態を更新する
 	void _updateBtnVisible()
 	{
-		bool bCamMode = IsCameraMode();
+		bool bCamMode = _isCameraMode();
 
 		// MMDの「元に戻す」ボタンと「やり直し」ボタンはカメラモードでは非表示
 		ShowWindow(m_undoBtnH, !bCamMode);
@@ -1572,10 +1589,5 @@ int version() { return 3; }
 
 MMDPluginDLL3* create3(IDirect3DDevice9*)
 {
-	if (!MMDVersionOk())
-	{
-		MessageBox(getHWND(), _T("MMDのバージョンが 9.31 ではありません。\nCameraModeUndoは Ver.9.31 以外では正常に作動しません。"), _T("CameraModeUndo"), MB_OK | MB_ICONERROR);
-		return nullptr;
-	}
 	return CameraModeUndoPlugin::GetInstance();
 }
