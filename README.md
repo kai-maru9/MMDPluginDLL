@@ -1,19 +1,17 @@
 # MMDPluginDLL
 おいがみ様の MMDPlugin で使えるMMDのプラグインです。  
-今のところDLLは1つです。  
+追記：初期化処理のバグを勝手に修正させていただきました。
 
 
 #### 使用方法  
-MMDをおいがみ様の MMDPlugin(https://bowlroll.net/file/121761) を使える状態にしてください。  
-MMDのバージョンは v931x64 以外では使えません。  
-[ここ](https://github.com/Soul-chan/MMDPluginDLL/releases/download/1.0.0.0/MMDPluginDLL_1.0.0.0.zip)からダウンロードした qCameraModeUndo.dll を Plugin フォルダに入れてください。  
+MMDをおいがみ様の MMDPlugin(https://bowlroll.net/file/121761) を使える状態にしてください。
 
 #### ビルド方法
 ビルドにはおいがみ様の MMDPlugin ver0.41 64bit版 開発者用(https://bowlroll.net/file/135503) が必要です。  
 解凍して MMDPlugin.lib を MMDPlugin フォルダに置いてください。  
 mmd_plugin.h は改変させて頂いているので、上書きしないでください。  
 
-#### qCameraModeUndo.dll
+#### qCameraModeUndo.dll（バグを修正しました）
 MMDのカメラモードでキーフレームの元に戻す/やり直しが出来る様になります。  
 カメラモードでは元に戻す/やり直しの部分のボタンが4つになります。  
 ![](Image/readme0.jpg)  
@@ -47,37 +45,33 @@ MMDのカメラモードでキーフレームの元に戻す/やり直しが出�
 1フレームの操作なら約140万回分です。  
   
   
-#### qDispPlayingFrame.dll
+#### qDispPlayingFrame.dll　（バグを修正しました）
 再生中フレーム数を表示するUIを追加します。  
 「情報表示」のフレーム数表示を画面内に表示したくない、再生中以外でも表示したい、等の場合にお使いください。  
   
   
-#### qSetCameraFollowBone.dll
+#### qSetCameraFollowBone.dll　（※動作しません）
 「編集」メニューに「ｶﾒﾗのﾎﾞｰﾝ追従設定(F)」が追加されます。  
 カメラの選択中のキーフレームの「ボーン追従」を一括変更出来ます。  
 UIの「ボーン追従」で変更すると、カメラの位置等はリセットされますが、このプラグインではリセットされません。  
 カメラのモーションを読み込んだ後、一括でボーン追従させたい場合等にお使いください。  
   
   
-#### qSwapOutsideParent.dll
+#### qSwapOutsideParent.dll（※動作しません）
+
 「編集」メニューに「外部親差し替え(O)」が追加されます。  
 既存の外部親を別の外部親にすべて差し替える事が出来ます。  
 差し替えるモデル/カメラ/アクセサリは選択できますが、モデル/アクセサリを選ぶと読み込まれている全モデル/アクセサリが対象になります。  
 複数の「IKカメラボーン」を使い分ける際に使えるかと思います。  
   
   
-#### qOutsideParentReaderWriter.dll
+#### qOutsideParentReaderWriter.dll（※動作しませんが対応予定です）
 「ファイル」メニューに「外部親関係表示(R)」「外部親データ読込(O)」「外部親データ保存(T)」が追加されます。  
 「外部親関係表示(R)」は外部親/ボーン追従が設定されているモデル/カメラ/アクセサリを検索して表示します。  
 「外部親データ保存(T)」は外部親/ボーン追従の状態を*.vodファイル(CSV形式)に保存します。  
 フレームの選択状態は関係なく、0フレーム目から全フレーム分保存されます。  
 「外部親データ読込(O)」は*.vodファイルを読み込んで、モデル/カメラ/アクセサリに適用します。  
 モデルに適用する際は既存フレームの外部親情報を維持しますが、カメラ/アクセサリは既存フレームの外部親情報は上書きされます。  
-
-
-#### 更新履歴
-・qCameraModeUndo.dll  
-  1.0.0.0 初版公開  
 
 #### ライセンス
 GitHubでのライセンスは一番緩そうな[MIT](https://github.com/Soul-chan/MMDPluginDLL/blob/master/LICENSE)ライセンスにしています。  
